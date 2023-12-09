@@ -1,7 +1,5 @@
 #!/usr/bin/env python3
 
-from dataclasses import dataclass
-
 
 def task_1(lines: str) -> int:
     for line in lines:
@@ -23,8 +21,16 @@ def task_1(lines: str) -> int:
     return total
 
 
-def task_2(seeds: list) -> int:
-    pass
+def task_2(lines: list[str]) -> int:
+    for line in lines:
+        print(line)
+        if line[0].lower() == "time:":
+            time = int("".join(line[1:]))
+        if line[0].lower() == "distance:":
+            record = int("".join(line[1:]))
+    print(f"t2:time:{time}, record:{record}")
+
+    return winning_opportunities(time=time, record=record)
 
 
 def read_lines(f: str) -> list[str]:
@@ -51,8 +57,7 @@ if __name__ == "__main__":
 
     lines = read_lines(input_file)
     total_task_1 = task_1(lines=lines)
-
-    # total_task_2 = task_2()
+    total_task_2 = task_2(lines=lines)
 
     print(f"Task 1 Total: {total_task_1}")
     print(f"Task 2 Total: {total_task_2}")
