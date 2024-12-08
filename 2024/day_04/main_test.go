@@ -33,15 +33,15 @@ func TestTaskOne(t *testing.T) {
 	})
 }
 
-// func TestTaskTwo(t *testing.T) {
-// 	file := file.Get(filePath)
-// 	defer file.Close()
-// 	t.Run("task 2", func(t *testing.T) {
+func TestTaskTwo(t *testing.T) {
+	file := file.Get(filePath)
+	defer file.Close()
+	t.Run("task 1", func(t *testing.T) {
 
-// 		got := taskTwo()
-// 		want := true
-// 		if got != want {
-// 			t.Errorf("got %t want %t", got, want)
-// 		}
-// 	})
-// }
+		got := taskTwo(grid)
+		want := 9
+		if got != want {
+			t.Errorf("got %d want %d", got, want)
+		}
+	})
+}
