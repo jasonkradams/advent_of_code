@@ -29,12 +29,12 @@ var pageRules = pageUpdates{
 		{first: 53, last: 13},
 	},
 	pages: []pagesToProduce{
-		{[]int{75, 47, 61, 53, 29}},
-		{[]int{97, 61, 53, 29, 13}},
-		{[]int{75, 29, 13}},
-		{[]int{75, 97, 47, 61, 53}},
-		{[]int{61, 13, 29}},
-		{[]int{97, 13, 75, 29, 47}},
+		{[]int{75, 47, 61, 53, 29}, false},
+		{[]int{97, 61, 53, 29, 13}, false},
+		{[]int{75, 29, 13}, false},
+		{[]int{75, 97, 47, 61, 53}, false},
+		{[]int{61, 13, 29}, false},
+		{[]int{97, 13, 75, 29, 47}, false},
 	},
 }
 
@@ -51,12 +51,12 @@ func TestTaskOne(t *testing.T) {
 	})
 }
 
-// func TestTaskTwo(t *testing.T) {
-// 	t.Run("task 2", func(t *testing.T) {
-// 		got := taskTwo(pageRules)
-// 		want := 9
-// 		if got != want {
-// 			t.Errorf("got %d want %d", got, want)
-// 		}
-// 	})
-// }
+func TestTaskTwo(t *testing.T) {
+	t.Run("task 2", func(t *testing.T) {
+		got := taskTwo(pageRules)
+		want := 123
+		if got != want {
+			t.Errorf("got %d want %d", got, want)
+		}
+	})
+}

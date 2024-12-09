@@ -32,7 +32,8 @@ type orderingRule struct {
 }
 
 type pagesToProduce struct {
-	pages []int
+	pages   []int
+	ordered bool
 }
 
 // convertStringsToInts converts a slice of strings to a slice of integers.
@@ -134,8 +135,6 @@ func getMiddle(slice []int) int {
 // Returns:
 //   - A boolean indicating whether all rules are valid for the given page updates.
 func validatePageRules(rules []orderingRule, pageUpdates []int) bool {
-	// i need to know the index of first, and last
-
 	for _, rule := range rules {
 		firstIndex := getIndex(rule.first, pageUpdates)
 		lastIndex := getIndex(rule.last, pageUpdates)
@@ -147,9 +146,7 @@ func validatePageRules(rules []orderingRule, pageUpdates []int) bool {
 		if firstIndex > lastIndex {
 			return false
 		}
-
 	}
-
 	return true
 }
 
@@ -171,8 +168,83 @@ func taskOne(updates pageUpdates) int {
 	return sum
 }
 
+// orderPages rearranges the pages slice to satisfy the given ordering rules.
+// If a rule specifies that a page `first` should come before a page `last`,
+// the function swaps elements in the slice until all rules are satisfied.
+//
+// Parameters:
+//   - rules: A slice of orderingRule structs defining the order constraints.
+//   - pages: A slice of integers representing the pages to be ordered.
+//
+// Returns:
+//   - A reordered slice of integers that satisfies all the provided rules.
+//
+// Example:
+//
+//	rules := []orderingRule{{first: 1, last: 3}, {first: 2, last: 4}}
+//	pages := []int{3, 1, 4, 2}
+//	result := orderPages(rules, pages)
+//	// result will be [1, 2, 3, 4]
+func orderPages(rules []orderingRule, pages []int) []int {
+	// Keep track of changes to prevent an endless loop
+	for validatePageRules(rules, pages) != true {
+		modified := false // Flag to check if we made a change
+
+		for _, rule := range rules {
+			first := getIndex(rule.first, pages)
+			last := getIndex(rule.last, pages)
+
+			if first == -1 || last == -1 {
+				// If either page is not found, skip this rule
+				continue
+			}
+
+			if first > last {
+				// Swap to correct the order
+				pages[first], pages[last] = pages[last], pages[first]
+				modified = true
+			}
+		}
+
+		if !modified {
+			// If no modifications were made, break to avoid infinite loop
+			break
+		}
+	}
+	return pages
+}
+
+// taskTwo calculates the sum of the middle pages of updates that initially do not
+// satisfy the ordering rules. Pages are reordered using orderPages before calculating the sum.
+//
+// Parameters:
+//   - updates: A pageUpdates struct containing rules and pages.
+//
+// Returns:
+//   - An integer representing the sum of the middle pages of updates that
+//     were corrected to satisfy the ordering rules.
+//
+// Example:
+//
+//	updates := pageUpdates{
+//	    rules: []orderingRule{{first: 1, last: 3}, {first: 2, last: 5}},
+//	    pages: []pagesToProduce{
+//	        {pages: []int{3, 1, 2, 5, 4}},
+//	        {pages: []int{1, 3, 2, 4, 5}},
+//	    },
+//	}
+//	result := taskTwo(updates)
+//	// result will be the sum of the middle values of the corrected pages.
 func taskTwo(updates pageUpdates) int {
-	return 0
+	var sum int
+	for _, pages := range updates.pages {
+		validRule := validatePageRules(updates.rules, pages.pages)
+		if !validRule {
+			orderedPages := orderPages(updates.rules, pages.pages)
+			sum += getMiddle(orderedPages)
+		}
+	}
+	return sum
 }
 
 func main() {
