@@ -7,11 +7,12 @@ import (
 	"os"
 )
 
+type Direction int
+
 const (
 	filePath string = "input.txt"
 )
 
-// Directions: right, down, left, up
 var directions = [][2]int{
 	{0, 1},  // Right
 	{1, 0},  // Down
@@ -42,66 +43,110 @@ func findRoute(grid [][]rune) int {
 			}
 		}
 	}
-	fmt.Printf("Starting position: (%d, %d), Initial direction: %d\n", startX, startY, dir)
 
 	// Set of visited cells
 	visited := make(map[[2]int]bool)
 	visited[[2]int{startX, startY}] = true
-	fmt.Printf("Visited cells: %v\n", visited)
 
 	// Function to check if a cell is within bounds and not an obstruction
-	isValid := func(x, y int) (bool, string) {
-		reason := ""
-		if x < 0 || x >= len(grid) {
-			reason += "out of bounds vertically; "
-		}
-		if y < 0 || y >= len(grid[0]) {
-			reason += "out of bounds horizontally; "
-		}
-		if x >= 0 && x < len(grid) && y >= 0 && y < len(grid[0]) && grid[x][y] == '#' {
-			reason += "obstructed by a wall; "
-		}
-		valid := reason == ""
-		return valid, reason
+	isValid := func(x, y int) bool {
+		return !(x < 0 || x >= len(grid) || y < 0 || y >= len(grid[0]) || grid[x][y] == '#')
 	}
 
 	x, y := startX, startY
 	for {
 		// Move until obstruction
-		var reason string
 		for {
-			var valid bool
 			nextX, nextY := x+directions[dir][0], y+directions[dir][1]
-			valid, reason = isValid(nextX, nextY)
-			if !valid {
-				fmt.Printf("Position (%d, %d) is not valid: %s\n", nextX, nextY, reason)
+			if !isValid(nextX, nextY) {
 				break
 			}
-
 			x += directions[dir][0]
 			y += directions[dir][1]
 			visited[[2]int{x, y}] = true
-			fmt.Printf("Moved to position: (%d, %d)\n", x, y)
-		}
-
-		if reason == "out of bounds horizontally; " || reason == "out of bounds vertically; " {
-			break
 		}
 
 		// Try turning right (update direction)
 		dir = (dir + 1) % 4
-		fmt.Printf("Turned right, new direction: %d\n", dir)
 
 		// Check if we can move in the new direction
 		nextX, nextY := x+directions[dir][0], y+directions[dir][1]
-		if valid, reason := isValid(nextX, nextY); !valid {
-			fmt.Printf("No valid moves from position (%d, %d) in direction %d: %s\n", x, y, dir, reason)
+		if !isValid(nextX, nextY) {
 			break // No valid moves; exit the loop
 		}
 	}
 
-	fmt.Printf("Total unique visited cells: %d\n", len(visited))
 	return len(visited)
+}
+
+func countInfiniteLoops(grid [][]rune) int {
+	infiniteLoopCount := 0
+
+	// Function to check if a cell is within bounds and not an obstruction
+	isValid := func(x, y int, grid [][]rune) bool {
+		return !(x < 0 || x >= len(grid) || y < 0 || y >= len(grid[0]) || grid[x][y] == '#')
+	}
+	// isValidGrid := func(x, y int, grid [][]rune) bool {
+	// 	return !()
+	// }
+
+	// Function to check for infinite loop by detecting repeated states
+	containsInfiniteLoop := func(startX, startY int, grid [][]rune) bool {
+		for initialDir := 0; initialDir < len(directions); initialDir++ {
+			visitedStates := make(map[[3]int]bool)
+			x, y, dir := startX, startY, initialDir
+
+			for {
+				state := [3]int{x, y, dir}
+				fmt.Printf("%v, ", state)
+				fmt.Printf("(%d, %d) visiting - %d\n", x, y, dir)
+				if visitedStates[state] {
+					fmt.Printf("\nvisitedState%v", state)
+					return true
+				}
+				visitedStates[state] = true
+
+				// Move until obstruction
+				for {
+					nextX, nextY := x+directions[dir][0], y+directions[dir][1]
+					if !isValid(nextX, nextY, grid) {
+						fmt.Printf("is invalid\n")
+						break
+					}
+					x, y = nextX, nextY
+				}
+
+				// Turn right
+				dir = (dir + 1) % 4
+
+				// Check if next move is valid
+				nextX, nextY := x+directions[dir][0], y+directions[dir][1]
+				if !isValid(nextX, nextY, grid) {
+					break
+				}
+			}
+		}
+		return false
+	}
+
+	// Iterate over the grid to try placing an obstruction at every valid cell
+	for i := 0; i < len(grid); i++ {
+		for j := 0; j < len(grid[i]); j++ {
+			if grid[i][j] == '.' { // Place obstruction only on empty cells
+				grid[i][j] = '#'
+				fmt.Printf("\n(%d, %d)\n", i, j)
+				if containsInfiniteLoop(i, j, grid) {
+					fmt.Printf(" is infinite\n")
+					infiniteLoopCount++
+				} else {
+					fmt.Printf("")
+				}
+				grid[i][j] = '.' // Restore cell
+			}
+		}
+	}
+
+	return infiniteLoopCount
 }
 
 func taskOne(grid [][]rune) int {
@@ -109,8 +154,7 @@ func taskOne(grid [][]rune) int {
 }
 
 func taskTwo(grid [][]rune) int {
-
-	return 0
+	return countInfiniteLoops(grid)
 }
 
 func main() {
