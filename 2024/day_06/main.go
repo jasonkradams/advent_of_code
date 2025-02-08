@@ -79,27 +79,55 @@ func findRoute(grid [][]rune) int {
 	return len(visited)
 }
 
+const (
+	Right Direction = iota
+	Down
+	Left
+	Up
+)
+
+func newDirection(d Direction) Direction {
+	if d == Right {
+		return Down
+	}
+	if d == Down {
+		return Left
+	}
+	if d == Left {
+		return Up
+	}
+	return Right
+}
+
+var directionStrings = map[Direction]string{
+	Right: "Right",
+	Down:  "Down",
+	Left:  "Left",
+	Up:    "Up",
+}
+
 func countInfiniteLoops(grid [][]rune) int {
 	infiniteLoopCount := 0
 
 	// Function to check if a cell is within bounds and not an obstruction
 	isValid := func(x, y int, grid [][]rune) bool {
-		return !(x < 0 || x >= len(grid) || y < 0 || y >= len(grid[0]) || grid[x][y] == '#')
+		return (x < 0 || x >= len(grid) || y < 0 || y >= len(grid[0]) || grid[x][y] == '#')
 	}
-	// isValidGrid := func(x, y int, grid [][]rune) bool {
-	// 	return !()
-	// }
 
 	// Function to check for infinite loop by detecting repeated states
 	containsInfiniteLoop := func(startX, startY int, grid [][]rune) bool {
-		for initialDir := 0; initialDir < len(directions); initialDir++ {
-			visitedStates := make(map[[3]int]bool)
-			x, y, dir := startX, startY, initialDir
+		for _, d := range []Direction{Right, Down, Left, Up} {
+			var movements int
+
+			visitedStates := make(map[[3]any]bool)
+			x, y, dir := startX, startY, d
 
 			for {
-				state := [3]int{x, y, dir}
+				movements += 1
+
+				state := [3]any{x, y, dir}
 				fmt.Printf("%v, ", state)
-				fmt.Printf("(%d, %d) visiting - %d\n", x, y, dir)
+				fmt.Printf("(%d, %d) visiting - %s", x, y, directionStrings[dir])
 				if visitedStates[state] {
 					fmt.Printf("\nvisitedState%v", state)
 					return true
@@ -110,7 +138,7 @@ func countInfiniteLoops(grid [][]rune) int {
 				for {
 					nextX, nextY := x+directions[dir][0], y+directions[dir][1]
 					if !isValid(nextX, nextY, grid) {
-						fmt.Printf("is invalid\n")
+						fmt.Printf(" - is invalid\n")
 						break
 					}
 					x, y = nextX, nextY
