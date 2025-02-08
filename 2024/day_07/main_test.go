@@ -26,12 +26,40 @@ func TestTaskOne(t *testing.T) {
 	})
 }
 
-// func TestTaskTwo(t *testing.T) {
-// 	t.Run("task 2", func(t *testing.T) {
-// 		got := taskTwo(calibrations)
-// 		want := 6
-// 		if got != want {
-// 			t.Errorf("got %d want %d", got, want)
-// 		}
-// 	})
-// }
+// Test Task Two
+func TestTaskTwo(t *testing.T) {
+	var testCases = []struct {
+		name   string
+		expr   []int
+		target int
+		want   bool
+	}{
+		{
+			name:   "190: 10 19",
+			expr:   []int{10, 19},
+			target: 190,
+			want:   true,
+		},
+		{
+			name:   "7290:6 8 6 15",
+			expr:   []int{6, 8, 6, 15},
+			target: 7290,
+			want:   true,
+		},
+		{
+			name:   "192:17 8 14",
+			expr:   []int{17, 8, 14},
+			target: 192,
+			want:   true,
+		},
+	}
+
+	for _, tt := range testCases {
+		t.Run(tt.name, func(t *testing.T) {
+			got := canBeMade(tt.expr, tt.target)
+			if got != tt.want {
+				t.Errorf("got %v want %v for equation %s", got, tt.want, tt.name)
+			}
+		})
+	}
+}

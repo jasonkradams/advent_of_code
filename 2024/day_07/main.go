@@ -96,8 +96,56 @@ func taskOne(calibrations []Calibration) int {
 	return sum
 }
 
+func canBeMade(expr []int, target int) bool {
+	m := len(expr)
+	if m == 0 {
+		return false
+	}
+	if m == 1 {
+		return expr[0] == target
+	}
+
+	dp := make([]map[int]bool, m)
+
+	dp[0] = map[int]bool{expr[0]: true}
+
+	for i := 0; i < m-1; i++ {
+		currentNumber := expr[i+1]
+		nextMap := make(map[int]bool)
+		for val := range dp[i] {
+			sumVal := val + currentNumber
+			nextMap[sumVal] = true
+
+			productVal := val * currentNumber
+			nextMap[productVal] = true
+
+			strA := strconv.Itoa(val)
+			strB := strconv.Itoa(currentNumber)
+			concatStr := strA + strB
+			if len(concatStr) == 0 {
+				continue
+			}
+			intConcat, err := strconv.ParseInt(concatStr, 10, 64)
+			if err != nil {
+				continue
+			}
+			nextMap[int(intConcat)] = true
+		}
+		dp[i+1] = nextMap
+	}
+
+	_, exists := dp[m-1][target]
+	return exists
+}
+
 func taskTwo(calibrations []Calibration) int {
-	return 0
+	total := 0
+	for _, calib := range calibrations {
+		if canBeMade(calib.expression, calib.result) {
+			total += calib.result
+		}
+	}
+	return total
 }
 
 func main() {
