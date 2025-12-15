@@ -33,6 +33,8 @@ func Get(file string) *os.File {
 	return contents
 }
 
+// ReadLines reads the contents of the specified file and returns a slice of strings,
+// where each string represents a line from the file.
 func ReadLines(f *os.File) []string {
 	var lines []string
 	s := bufio.NewScanner(f)
