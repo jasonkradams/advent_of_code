@@ -1,6 +1,7 @@
 package file
 
 import (
+	"bufio"
 	"fmt"
 	"os"
 )
@@ -30,4 +31,13 @@ func Get(file string) *os.File {
 		panic(err)
 	}
 	return contents
+}
+
+func ReadLines(f *os.File) []string {
+	var lines []string
+	s := bufio.NewScanner(f)
+	for s.Scan() {
+		lines = append(lines, s.Text())
+	}
+	return lines
 }
