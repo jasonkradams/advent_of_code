@@ -1,12 +1,13 @@
 package main
 
 import (
-	"aoc/file"
 	"bufio"
 	"fmt"
 	"os"
 	"strconv"
 	"strings"
+
+	"github.com/jasonkradams/advent_of_code/2024/file"
 )
 
 const (

@@ -1,8 +1,9 @@
 package main
 
 import (
-	"aoc/file"
 	"testing"
+
+	"github.com/jasonkradams/advent_of_code/2024/file"
 )
 
 var fileName string = "input.txt"

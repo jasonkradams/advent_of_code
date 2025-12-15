@@ -1,12 +1,13 @@
 package main
 
 import (
-	file "aoc/file"
 	"bufio"
 	"fmt"
 	"sort"
 	"strconv"
 	"strings"
+
+	file "github.com/jasonkradams/advent_of_code/2024/file"
 )
 
 var (

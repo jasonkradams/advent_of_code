@@ -1,7 +1,7 @@
 package main
 
 import (
-	"aoc/file"
+	"github.com/jasonkradams/advent_of_code/2024/file"
 
 	"bufio"
 	"fmt"

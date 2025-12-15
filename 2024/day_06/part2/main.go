@@ -1,10 +1,11 @@
 package main
 
 import (
-	"aoc/file"
 	"bufio"
 	"fmt"
 	"os"
+
+	"github.com/jasonkradams/advent_of_code/2024/file"
 )
 
 type State struct {
