@@ -6,7 +6,7 @@ import (
 	"github.com/jasonkradams/advent_of_code/2025/day01"
 )
 
-func TestDay01(t *testing.T) {
+func TestDay01Example(t *testing.T) {
 	rotations := []string{
 		"L68",
 		"L30",
@@ -22,6 +22,15 @@ func TestDay01(t *testing.T) {
 
 	want := 3
 	got := day01.Day01(rotations)
+
+	if got != want {
+		t.Errorf("got %d want %d", got, want)
+	}
+}
+
+func TestDay01PartOne(t *testing.T) {
+	want := 1086
+	got := day01.PartOne()
 
 	if got != want {
 		t.Errorf("got %d want %d", got, want)
